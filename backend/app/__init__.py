@@ -1,0 +1,1 @@
+"""Naming API application package."""
