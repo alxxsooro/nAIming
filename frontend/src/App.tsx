@@ -1,53 +1,35 @@
-import { useEffect, useState } from "react";
-
-const apiBase =
-  import.meta.env.VITE_API_URL?.replace(/\/$/, "") ?? "http://127.0.0.1:8000";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import { AppLayout } from "./components/AppLayout";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { LandingPage } from "./pages/LandingPage";
+import { ToolPage } from "./pages/ToolPage";
+import { BlogPage } from "./pages/BlogPage";
+import { LoginPage } from "./pages/LoginPage";
+import { SignUpPage } from "./pages/SignUpPage";
 
 export default function App() {
-  const [health, setHealth] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const ac = new AbortController();
-    fetch(`${apiBase}/health`, { signal: ac.signal })
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json() as Promise<{ status: string }>;
-      })
-      .then((data) => setHealth(data.status))
-      .catch((e: unknown) => {
-        if (e instanceof Error && e.name === "AbortError") return;
-        setError(e instanceof Error ? e.message : "Error desconocido");
-      });
-    return () => ac.abort();
-  }, []);
-
   return (
-    <main
-      style={{
-        padding: "2rem",
-        maxWidth: "40rem",
-        margin: "0 auto",
-      }}
-    >
-      <h1 style={{ marginTop: 0 }}>Naming</h1>
-      <p>Frontend mínimo conectado al API FastAPI.</p>
-      <p>
-        Base del API: <code>{apiBase}</code>
-      </p>
-      <p>
-        <strong>Health</strong>:{" "}
-        {error ? (
-          <span style={{ color: "#b00020" }}>
-            No se pudo conectar ({error}). ¿Está el backend en{" "}
-            <code>uvicorn</code>?
-          </span>
-        ) : health ? (
-          <span style={{ color: "#1b5e20" }}>{health}</span>
-        ) : (
-          "Comprobando…"
-        )}
-      </p>
-    </main>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
+            <Route
+              path="/tool"
+              element={
+                <ProtectedRoute>
+                  <ToolPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }

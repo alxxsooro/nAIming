@@ -1,15 +1,15 @@
 # Naming
 
-Herramienta para ayudar a emprendedores con el naming de su proyecto (API en FastAPI).
+Help founders name their projects (FastAPI backend + Vite frontend).
 
-## Requisitos
+## Requirements
 
 - Python 3.11+
-- Node.js 20+ y npm
+- Node.js 20+ and npm
 
 ## Frontend
 
-En la raíz del repo (tras `npm install` dentro de `frontend/` la primera vez):
+From the repo root (after `npm install` in `frontend/` the first time):
 
 ```bash
 cd frontend
@@ -18,9 +18,16 @@ cd ..
 npm run dev
 ```
 
-Abre http://127.0.0.1:5173 — comprueba el **health** del API (el backend debe estar en marcha).
+Open http://127.0.0.1:5173 and verify API health (backend must be running).
 
-Opcional: copia `frontend/.env.example` a `frontend/.env` y ajusta `VITE_API_URL` si el API no está en `http://127.0.0.1:8000`.
+Copy `frontend/.env.example` to `frontend/.env` and set:
+
+- `VITE_API_URL` — FastAPI URL (default local: `http://127.0.0.1:8000`).
+- `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` — Supabase **Project Settings → API** (use the **anon public** key).
+
+In Supabase, under **Authentication → URL Configuration**, add redirect URLs: `http://localhost:5173` and `http://127.0.0.1:5173`.
+
+Initial SQL (`profiles` table + RLS): see `supabase/migrations/001_profiles.sql` if present and run it in the project **SQL Editor**.
 
 ## API (backend)
 
@@ -35,9 +42,9 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-- Documentación interactiva: http://127.0.0.1:8000/docs
-- Health check: `GET http://127.0.0.1:8000/health`
+- Interactive docs: http://127.0.0.1:8000/docs
+- Health: `GET http://127.0.0.1:8000/health`
 
-## Licencia
+## License
 
-Por definir.
+TBD.

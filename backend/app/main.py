@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="Naming API",
-    description="API para generación de nombres y utilidades para emprendedores.",
+    description="API for name generation and founder utilities.",
     version="0.1.0",
 )
 
@@ -21,7 +21,7 @@ app.add_middleware(
 
 @app.get("/health")
 def health() -> dict[str, str]:
-    """Liveness/readiness: el proceso responde y la app está montada."""
+    """Liveness/readiness: process responds and the app is mounted."""
     return {"status": "ok"}
 
 
