@@ -5,6 +5,22 @@ Herramienta para ayudar a emprendedores con el naming de su proyecto (API en Fas
 ## Requisitos
 
 - Python 3.11+
+- Node.js 20+ y npm
+
+## Frontend
+
+En la raíz del repo (tras `npm install` dentro de `frontend/` la primera vez):
+
+```bash
+cd frontend
+npm install
+cd ..
+npm run dev
+```
+
+Abre http://127.0.0.1:5173 — comprueba el **health** del API (el backend debe estar en marcha).
+
+Opcional: copia `frontend/.env.example` a `frontend/.env` y ajusta `VITE_API_URL` si el API no está en `http://127.0.0.1:8000`.
 
 ## API (backend)
 

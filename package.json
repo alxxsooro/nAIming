@@ -1,0 +1,7 @@
+{
+  "name": "naming",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix frontend run dev"
+  }
+}
