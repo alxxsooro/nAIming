@@ -5,10 +5,6 @@ export function LandingPage() {
     <div className="page page--landing">
       <section className="hero hero--saas" aria-labelledby="hero-title">
         <div className="hero__inner hero__inner--center">
-          <p className="hero__badge">
-            <span className="hero__badge-dot" aria-hidden />
-            Naming &amp; brand for indie builders
-          </p>
           <h1 id="hero-title" className="hero__title hero__title--saas">
             Naming and branding for your{" "}
             <span className="hero__launch-lockup">
