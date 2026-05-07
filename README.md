@@ -1,4 +1,4 @@
-# Naming
+# nAIming
 
 Help founders name their projects (FastAPI backend + Vite frontend).
 
