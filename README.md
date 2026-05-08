@@ -1,50 +1,121 @@
 # Naming
 
-Help founders name their projects (FastAPI backend + Vite frontend).
+Help founders name their projects: **FastAPI** backend + **Vite/React** frontend, **Supabase** for auth and data.
 
-## Requirements
+| Area | Stack |
+|------|--------|
+| Frontend | Vite 5, React 18, TypeScript, Supabase JS client |
+| Backend | FastAPI, Uvicorn |
+| Data / auth | Supabase (Postgres + Auth + RLS) |
 
-- Python 3.11+
-- Node.js 20+ and npm
+**License:** [MIT](LICENSE). **Contributing:** see [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-## Frontend
+---
 
-From the repo root (after `npm install` in `frontend/` the first time):
+## Quick start (local, &lt; 30 min)
 
-```bash
-cd frontend
-npm install
-cd ..
-npm run dev
+**Requirements:** Python 3.11+, Node.js 20+, npm, a [Supabase](https://supabase.com) project (free tier is fine).
+
+1. **Clone and install**
+
+   ```bash
+   git clone <your-fork-or-repo-url> naming
+   cd naming
+   ```
+
+2. **Frontend**
+
+   ```bash
+   cd frontend
+   npm install
+   cp .env.example .env
+   # Edit .env: VITE_API_URL, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+   cd ..
+   ```
+
+3. **Backend**
+
+   ```bash
+   cd backend
+   python -m venv .venv
+   # Windows: .\.venv\Scripts\Activate.ps1
+   # macOS/Linux: source .venv/bin/activate
+   pip install -r requirements.txt
+   uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+   ```
+
+4. **Supabase**
+
+   - **Project Settings → API:** copy Project URL and `anon` **public** key into `frontend/.env`.
+   - **Authentication → URL Configuration:** add redirect URLs for dev, e.g. `http://localhost:5173` and `http://127.0.0.1:5173`. Add your **Vercel preview/production** URL when you deploy.
+   - **SQL Editor:** run migrations under `supabase/migrations/` in order (e.g. `001_projects.sql`) so tables and RLS exist.
+
+5. **Run the app**
+
+   From repo root:
+
+   ```bash
+   npm run dev
+   ```
+
+   Open http://127.0.0.1:5173 — the UI expects the API at `VITE_API_URL` (default `http://127.0.0.1:8000`).
+
+6. **Healthcheck**
+
+   ```bash
+   curl -s http://127.0.0.1:8000/health
+   # {"status":"ok"}
+   ```
+
+---
+
+## Monorepo layout
+
+```
+naming/
+  frontend/          # Vite app (see frontend/.env.example)
+  backend/           # FastAPI (see backend/.env.example)
+  supabase/migrations/
+  .github/workflows/ # CI (frontend build + backend pytest)
 ```
 
-Open http://127.0.0.1:5173 and verify API health (backend must be running).
+---
 
-Copy `frontend/.env.example` to `frontend/.env` and set:
+## CI
 
-- `VITE_API_URL` — FastAPI URL (default local: `http://127.0.0.1:8000`).
-- `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` — Supabase **Project Settings → API** (use the **anon public** key).
+GitHub Actions runs on every push/PR to `main`/`master`:
 
-In Supabase, under **Authentication → URL Configuration**, add redirect URLs: `http://localhost:5173` and `http://127.0.0.1:5173`.
+- **Frontend:** `npm ci` + `npm run build` (TypeScript + Vite).
+- **Backend:** `pytest` (includes `/health` test).
 
-Initial SQL (`profiles` table + RLS): see `supabase/migrations/001_profiles.sql` if present and run it in the project **SQL Editor**.
+---
 
-## API (backend)
+## Deploy (preview / production)
 
-```bash
-cd backend
-python -m venv .venv
+- **Frontend (e.g. Vercel):** set the same env vars as `frontend/.env` (`VITE_*`). Build command: `cd frontend && npm install && npm run build`, output directory: `frontend/dist`.
+- **API:** host the FastAPI app (Railway, Fly.io, your VM, etc.) and point `VITE_API_URL` at the public API URL. **CORS:** extend `allow_origins` in `backend/app/main.py` (or env-driven list) to include your Vercel domain.
+- **Supabase:** one dev/staging project is enough to start; use the same anon key in the frontend build env. RLS policies live in `supabase/migrations/`.
 
-# Windows PowerShell
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+---
 
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
+## Sprint 1 checklist (product)
 
-- Interactive docs: http://127.0.0.1:8000/docs
-- Health: `GET http://127.0.0.1:8000/health`
+| ID | Status | Notes |
+|----|--------|--------|
+| US1.1 Landing + CTA | Done | Hero, steps, FAQ, CTAs on `/` |
+| US1.2 Sign up / login | Partial | Email + password via Supabase. **OAuth:** enable providers in Supabase Dashboard; UI buttons not added yet (add Google/GitHub calls to `signInWithOAuth` in a follow-up). |
+| US1.3 Monorepo docs + env examples | Done | This README, `frontend/.env.example`, `backend/.env.example` |
+| US1.4 CI | Done | `.github/workflows/ci.yml` |
+| US1.5 Supabase + RLS | Partial | Run SQL migrations; set env on Vercel/host yourself |
+| US1.6 App layout / nav | Done | Header + routes (English copy: Home, Studio, Projects when authed, Blog, Settings) |
+| US1.7 README + CONTRIBUTING + CoC | Done | This file + CONTRIBUTING + CODE_OF_CONDUCT |
+| US1.8 LICENSE | Done | MIT in repo root |
 
-## License
+**Deliverable:** deploy frontend + API with healthcheck + Supabase linked — follow **Deploy** above once your hosting is chosen.
 
-TBD.
+---
+
+## API
+
+- Docs: `GET /docs` when the server is running.
+- Health: `GET /health` → `{"status":"ok"}`.

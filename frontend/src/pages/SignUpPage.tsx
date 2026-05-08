@@ -2,6 +2,34 @@ import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
+type PasswordStrength = "weak" | "fair" | "good" | "strong";
+
+function getPasswordStrength(password: string): PasswordStrength | null {
+  if (!password) {
+    return null;
+  }
+
+  let score = 0;
+  if (password.length >= 8) score += 1;
+  if (password.length >= 12) score += 1;
+  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 1;
+  if (/\d/.test(password)) score += 1;
+  if (/[^A-Za-z0-9]/.test(password)) score += 1;
+
+  if (score <= 1) return "weak";
+  if (score === 2) return "fair";
+  if (score === 3 || score === 4) return "good";
+  return "strong";
+}
+
+function getStrengthProgress(strength: PasswordStrength | null): number {
+  if (!strength) return 0;
+  if (strength === "weak") return 25;
+  if (strength === "fair") return 50;
+  if (strength === "good") return 75;
+  return 100;
+}
+
 export function SignUpPage() {
   const { signUp, configError } = useAuth();
   const navigate = useNavigate();
@@ -11,6 +39,8 @@ export function SignUpPage() {
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const passwordStrength = getPasswordStrength(password);
+  const strengthProgress = getStrengthProgress(passwordStrength);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -70,6 +100,23 @@ export function SignUpPage() {
               required
               minLength={6}
             />
+            {passwordStrength && (
+              <>
+                <p
+                  className={`password-strength password-strength--${passwordStrength}`}
+                  role="status"
+                  aria-live="polite"
+                >
+                  {passwordStrength}
+                </p>
+                <div className="password-strength-bar" aria-hidden="true">
+                  <span
+                    className={`password-strength-bar__fill password-strength-bar__fill--${passwordStrength}`}
+                    style={{ width: `${strengthProgress}%` }}
+                  />
+                </div>
+              </>
+            )}
           </div>
           <div className="field">
             <label htmlFor="signup-confirm">Confirm password</label>

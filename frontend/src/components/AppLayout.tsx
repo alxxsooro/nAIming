@@ -4,33 +4,46 @@ import { useAuth } from "../contexts/AuthContext";
 export function AppLayout() {
   const { user, loading, signOut, configError } = useAuth();
   const navigate = useNavigate();
+  const isAuthed = !loading && !!user;
 
   return (
     <div className="shell">
       <header className="site-header">
         <div className="site-header__card">
-          <Link to="/" className="site-logo">
+          <Link to={isAuthed ? "/tool" : "/"} className="site-logo">
             <span className="site-logo__mark" aria-hidden />
             Naming
           </Link>
           <nav className="site-nav" aria-label="Main">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `nav-link${isActive ? " nav-link--active" : ""}`
-              }
-              end
-            >
-              Home
-            </NavLink>
+            {!isAuthed && (
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  `nav-link${isActive ? " nav-link--active" : ""}`
+                }
+                end
+              >
+                Home
+              </NavLink>
+            )}
             <NavLink
               to="/tool"
               className={({ isActive }) =>
                 `nav-link${isActive ? " nav-link--active" : ""}`
               }
             >
-              Tool
+              Studio
             </NavLink>
+            {isAuthed && (
+              <NavLink
+                to="/projects"
+                className={({ isActive }) =>
+                  `nav-link${isActive ? " nav-link--active" : ""}`
+                }
+              >
+                Projects
+              </NavLink>
+            )}
             <NavLink
               to="/blog"
               className={({ isActive }) =>
@@ -39,6 +52,16 @@ export function AppLayout() {
             >
               Blog
             </NavLink>
+            {isAuthed && (
+              <NavLink
+                to="/settings"
+                className={({ isActive }) =>
+                  `nav-link${isActive ? " nav-link--active" : ""}`
+                }
+              >
+                Settings
+              </NavLink>
+            )}
           </nav>
           <div className="site-header__actions">
             {configError && (
@@ -86,7 +109,7 @@ export function AppLayout() {
         <div className="site-footer__card">
           <div className="site-footer__grid">
             <div className="site-footer__brand">
-              <Link to="/" className="site-logo">
+              <Link to={isAuthed ? "/tool" : "/"} className="site-logo">
                 <span className="site-logo__mark" aria-hidden />
                 Naming
               </Link>
@@ -98,21 +121,33 @@ export function AppLayout() {
               <div className="site-footer__group">
                 <h2 className="site-footer__label">Product</h2>
                 <Link to="/tool" className="nav-link">
-                  Tool
+                  Studio
                 </Link>
+                {isAuthed && (
+                  <Link to="/projects" className="nav-link">
+                    Projects
+                  </Link>
+                )}
                 <Link to="/blog" className="nav-link">
                   Blog
                 </Link>
+                {isAuthed && (
+                  <Link to="/settings" className="nav-link">
+                    Settings
+                  </Link>
+                )}
               </div>
-              <div className="site-footer__group">
-                <h2 className="site-footer__label">Resources</h2>
-                <Link to="/#how-it-works" className="nav-link">
-                  How it works
-                </Link>
-                <Link to="/#faq" className="nav-link">
-                  FAQ
-                </Link>
-              </div>
+              {!isAuthed && (
+                <div className="site-footer__group">
+                  <h2 className="site-footer__label">Resources</h2>
+                  <Link to="/#how-it-works" className="nav-link">
+                    How it works
+                  </Link>
+                  <Link to="/#faq" className="nav-link">
+                    FAQ
+                  </Link>
+                </div>
+              )}
             </nav>
           </div>
           <div className="site-footer__rule" aria-hidden />

@@ -24,7 +24,7 @@ export function ToolPage() {
 
   return (
     <main className="page page--article">
-      <h1 className="page-title">Tool</h1>
+      <h1 className="page-title">Studio</h1>
       <p className="page-lead">
         Name generation will live here. For now, API status.
       </p>
