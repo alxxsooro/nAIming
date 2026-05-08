@@ -4,6 +4,7 @@ import { AppLayout } from "./components/AppLayout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { LandingPage } from "./pages/LandingPage";
 import { ToolPage } from "./pages/ToolPage";
+import { StudioResultsPage } from "./pages/StudioResultsPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { ProjectsPage } from "./pages/ProjectsPage";
 import { BlogPage } from "./pages/BlogPage";
@@ -25,6 +26,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <ToolPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/studio/results/:id"
+              element={
+                <ProtectedRoute>
+                  <StudioResultsPage />
                 </ProtectedRoute>
               }
             />

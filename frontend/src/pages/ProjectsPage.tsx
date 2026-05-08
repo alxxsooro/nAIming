@@ -4,6 +4,14 @@ import { useAuth } from "../contexts/AuthContext";
 import { supabase } from "../lib/supabase";
 import type { Project } from "../types/project";
 
+function getGenerationId(metadata: Project["metadata"]): string | null {
+  const candidate =
+    metadata && typeof metadata === "object"
+      ? (metadata as Record<string, unknown>).generation_id
+      : null;
+  return typeof candidate === "string" && candidate ? candidate : null;
+}
+
 export function ProjectsPage() {
   const { configError } = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null);
@@ -94,7 +102,9 @@ export function ProjectsPage() {
         </div>
       ) : (
         <ul className="projects-list">
-          {projects.map((p) => (
+          {projects.map((p) => {
+            const generationId = getGenerationId(p.metadata);
+            return (
             <li key={p.id}>
               <article className="card project-card">
                 <div className="project-card__main">
@@ -118,6 +128,16 @@ export function ProjectsPage() {
                       <p className="project-card__tagline">{p.tagline}</p>
                     )}
                     {p.brief && <p className="project-card__brief">{p.brief}</p>}
+                    {generationId && (
+                      <p className="project-card__actions">
+                        <Link
+                          to={`/studio/results/${generationId}`}
+                          className="btn btn--secondary btn--sm"
+                        >
+                          View alternatives
+                        </Link>
+                      </p>
+                    )}
                   </div>
                 </div>
                 <p className="project-card__meta">
@@ -128,7 +148,8 @@ export function ProjectsPage() {
                 </p>
               </article>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </main>
