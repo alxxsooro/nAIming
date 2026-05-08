@@ -1,4 +1,4 @@
-# Naming
+# nAIming
 
 Help founders name their projects: **FastAPI** backend + **Vite/React** frontend, **Supabase** for auth and data.
 
